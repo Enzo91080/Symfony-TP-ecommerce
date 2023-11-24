@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductController!
+{% endblock %}
+
+{% block body %}
+	{% if notification is not null %}
+		<div class="alert {{type_notif}}">{{notification}}</div>
+	{% endif %}
+	{{ app.session.set('notification', null) }}
+	<div class="container my-5">
+		<h1 class="text-center mb-5">Bienvenue sur Notre Boutique!</h1>
+		<div class="row">
+			{% for product in products %}
+				<div class='col-md-4 mb-4'>
+					<div class='card'>
+						<img src='{{product.picture}}' alt='{{product.title}}' class='card-img-top'>
+						<div class='card-body'>
+							<h5 class='card-title'>{{product.title}}</h5>
+							<p class='card-text'>{{product.description}}</p>
+							<p class='card-text font-weight-bold'>{{product.price}}
+								€</p>
+							<div class="d-flex flex-column gap-2">
+                            <a href="{{ path('view_product', {id_product: product.id})}}" class='btn btn-primary'>Voir Detail</a>
+								<a href='cart.php?action=add&id=$id' class='btn btn-success'>Ajouter au Panier</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}
