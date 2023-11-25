@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Titre
+{% endblock %}
+
+{% block body %}
+	<div class="container my-5">
+		<h1 class="text-center mb-5">Récapitulatif de la Commande</h1>
+		<div class="row justify-content-center">
+			<div class="col-md-8">
+				<div class="card shadow-lg mb-4">
+					<div class="card-body">
+						<h2 class="mb-4">Produits</h2>
+						<table class="table table-borderless">
+							{% for product in products %}
+								<tr>
+									<td>{{ product.title }}</td>
+									<td class="text-right">{{ panier[product.id] }}</td>
+								</tr>
+							{% endfor %}
+						</table>
+					</div>
+				</div>
+
+				<div class="card shadow-lg mb-4">
+					<div class="card-body">
+						<h2 class="mb-4">Informations du Client</h2>
+						<p>
+							<strong>Prénom:</strong>
+							{{ checkout.first_name }}</p>
+						<p>
+							<strong>Nom de famille:</strong>
+							{{ checkout.first_name }}</p>
+						<p>
+							<strong>Email:</strong>
+							{{ checkout.email }}</p>
+						<p>
+							<strong>Adresse:</strong>
+							{{ checkout.address }}</p>
+					</div>
+				</div>
+
+				<form action="order_summary.php" method="post">
+					<button type="submit" class="btn btn-primary btn-lg btn-block">Procéder au Paiement</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

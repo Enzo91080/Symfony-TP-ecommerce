@@ -21,8 +21,8 @@
 							<p class='card-text font-weight-bold'>{{product.price}}
 								€</p>
 							<div class="d-flex flex-column gap-2">
-                            <a href="{{ path('view_product', {id_product: product.id})}}" class='btn btn-primary'>Voir Detail</a>
-								<a href='cart.php?action=add&id=$id' class='btn btn-success'>Ajouter au Panier</a>
+								<a href="{{ path('view_product', {id_product: product.id})}}" class='btn btn-primary'>Voir Detail</a>
+								<a href="{{ path('add_to_cart', {id_product: product.id}) }}" class='btn btn-success'>Ajouter au panier</a>
 							</div>
 						</div>
 					</div>
