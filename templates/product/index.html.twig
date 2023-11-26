@@ -4,10 +4,6 @@
 {% endblock %}
 
 {% block body %}
-	{% if notification is not null %}
-		<div class="alert {{type_notif}}">{{notification}}</div>
-	{% endif %}
-	{{ app.session.set('notification', null) }}
 	<div class="container my-5">
 		<h1 class="text-center mb-5">Bienvenue sur Notre Boutique!</h1>
 		<div class="row">

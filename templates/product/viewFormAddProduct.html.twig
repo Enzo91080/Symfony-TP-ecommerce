@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Produit
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+	<div class="row">
+		<div class="col-md-8 offset-md-2">
+			<h1 class="text-center mb-4">Ajouter un Produit</h1>
+			<div class="d-flex justify-content-between mb-2">
+				<a href="{{ path('list_products') }}" class="btn btn-light">Liste des Produits</a>
+			</div>
+			<div class="bg-white p-4 rounded">
+				{{ form_start(form) }}
+
+				{{ form_row(form.title, {'label': 'Titre du produit', 'attr': {'placeholder': 'Titre du produit', 'class': 'form-control'}}) }}
+				{{ form_row(form.description, {'label': 'Description du produit', 'attr': {'placeholder': 'Description du produit', 'class': 'form-control'}}) }}
+				{{ form_row(form.price, {'label': 'Prix du produit', 'attr': {'placeholder': 'Prix du produit', 'class': 'form-control'}}) }}
+				{{ form_row(form.picture, {'label': 'Image (lien)', 'attr': {'placeholder': 'Lien vers l\'image du produit', 'class': 'form-control'}}) }}
+                {{ form_row(form.submit, {'label': 'Valider', 'attr': {'class': 'btn btn-primary'}}) }}                
+                {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

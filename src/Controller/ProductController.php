@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Form\CheckoutType;
+use App\Form\ProductType;
 
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -23,13 +24,10 @@ class ProductController extends AbstractController
         $products = $em->getRepository(Product::class)->findAll();
 
         $session = $request->getSession();
-        $notification = $session->get('notification');
-        $type_notif = $session->get('type_notif');
+     
 
         return $this->render('product/index.html.twig', [
             'products' => $products,
-            'notification' => $notification,
-            'type_notif' => $type_notif,
         ]);
     }
 
@@ -68,8 +66,6 @@ class ProductController extends AbstractController
 
         $session->set('panier', $panier);
 
-        $session->set('notification', 'Le produit a bien été ajouté au panier');
-        $session->set('type_notif', "alert-success");
 
         if (empty($session->get('panier'))) {
             throw $this->createNotFoundException('Panier vide');
@@ -155,6 +151,136 @@ class ProductController extends AbstractController
     public function viewThankYou(): Response
     {
         return $this->render('product/viewThankYou.html.twig');
+    }
 
+
+    #[Route('/admin-register', name: 'admin_register')]
+    public function register(Request $request): Response
+    {
+        $username = $request->request->get('username');
+        $password = $request->request->get('password');
+
+        if ($request->isMethod('POST')) {
+            $session = $request->getSession();
+
+            if (!$session->has('admin_credentials')) {
+                $session->set('admin_credentials', []);
+            }
+
+            $adminCredentials = $session->get('admin_credentials');
+            $adminCredentials[$username] = $password;
+
+            $session->set('admin_credentials', $adminCredentials);
+
+            return $this->redirectToRoute('admin_login'); // Rediriger vers la page de login admin
+        }
+        return $this->render('product/viewFormRegister.html.twig', [
+            'username' => $username,
+            'password' => $password,
+        ]);
+    }
+
+    #[Route('/admin-login', name: 'admin_login')]
+    public function login(Request $request): Response
+    {
+        $username = $request->request->get('username');
+        $password = $request->request->get('password');
+
+        if ($request->isMethod('POST')) {
+            $session = $request->getSession();
+
+            if (!$session->has('admin_credentials')) {
+                $session->set('admin_credentials', []);
+            }
+
+            $adminCredentials = $session->get('admin_credentials');
+
+            if (array_key_exists($username, $adminCredentials) && $adminCredentials[$username] === $password) {
+                $session->set('admin', $username);
+                return $this->redirectToRoute('admin_dashboard');
+            }
+        }
+        return $this->render('product/viewFormLogin.html.twig', [
+            'username' => $username,
+            'password' => $password,
+        ]);
+    }
+
+    #[Route('/admin-dashboard', name: 'admin_dashboard')]
+    public function getProductsAdmin(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $em = $doctrine->getManager();
+        $products = $em->getRepository(Product::class)->findAll();
+        $session = $request->getSession();
+
+        return $this->render('product/viewDashboard.html.twig', [
+            'products' => $products,
+        ]);
+    }
+
+
+    #[Route('/admin-add-product', name: 'admin_add_product')]
+    public function addProduct(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $em = $doctrine->getManager();
+
+        $product = new Product();
+        $form = $this->createForm(ProductType::class, $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
+
+            $em->persist($product);
+            $em->flush();
+
+            $session = $request->getSession();
+
+            return $this->redirectToRoute('list_products');
+        }
+
+        return $this->render('product/viewFormAddProduct.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    //    update product 
+    #[Route('/admin-edit-product/{id_product}', name: 'admin_edit_product')]
+    public function editProduct($id_product, ManagerRegistry $doctrine, Request $request): Response
+    {
+        $em = $doctrine->getManager();
+
+        $product = $em->getRepository(Product::class)->find($id_product);
+
+        if ($product === null) {
+            return $this->redirectToRoute('list_products');
+        }
+
+        $form = $this->createForm(ProductType::class, $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('submit')->isClicked()) {
+                // Le bouton Valider a été cliqué
+                $em->flush();
+
+                $session = $request->getSession();
+              
+                return $this->redirectToRoute('admin_dashboard');
+            } elseif ($form->get('delete')->isClicked()) {
+                // Le bouton Supprimer a été cliqué
+                $em->remove($product);
+                $em->flush();
+
+                $session = $request->getSession();
+                return $this->redirectToRoute('admin_dashboard');
+            }
+        }
+
+        return $this->render('product/viewFormEditProduct.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }
