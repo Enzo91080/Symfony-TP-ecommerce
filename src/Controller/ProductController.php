@@ -15,7 +15,7 @@ class ProductController extends AbstractController
 {
 
 
-    #[Route('/', name: 'app_product')]
+    #[Route('/', name: 'list_products')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
     {
         $em = $doctrine->getManager();
@@ -151,6 +151,10 @@ class ProductController extends AbstractController
         ]);
     }
 
-    
+    #[Route('thank-you', name: 'thank_you')]
+    public function viewThankYou(): Response
+    {
+        return $this->render('product/viewThankYou.html.twig');
 
+    }
 }

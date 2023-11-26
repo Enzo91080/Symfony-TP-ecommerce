@@ -22,9 +22,6 @@ class Product
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\Column]
-    private ?int $quantity = null;
-
     #[ORM\Column(length: 255)]
     private ?string $picture = null;
 
@@ -65,18 +62,6 @@ class Product
     public function setPrice(float $price): static
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getQuantity(): ?int
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(int $quantity): static
-    {
-        $this->quantity = $quantity;
 
         return $this;
     }
